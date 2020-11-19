@@ -1,0 +1,53 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
+div#global{
+    background-image: url("https://amymhaddad.s3.amazonaws.com/morocco-blue.png");
+    
+    
+  
+}
+
+@media print {
+    .container {
+      text-align: center;
+      
+    }
+  }
+
+
+  .carousel {
+    width: 400px;
+  }
+  
+  .carousel-item,
+  .carousel-inner,
+  .carousel-inner img {
+
+    
+  }
+  
+  .carousel-item {
+    
+    
+  }
+
+  .carousel-control-next,
+  .carousel-control-prev {
+      filter: invert(100%);
+  }
+
+  .map-container-5{
+    overflow:hidden;
+    padding-bottom:56.25%;
+    position:relative;
+    height:0;
+    }
+    .map-container-5 iframe{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
+    }
+
+   

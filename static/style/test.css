@@ -1,0 +1,27 @@
+div#container{
+   
+}
+
+.carousel {
+    width: 400px;
+    
+  }
+  
+  .carousel-item,
+  .carousel-inner,
+  .carousel-inner img {
+    
+   
+    
+    
+  }
+  
+  .carousel-item {
+    
+    
+  }
+
+  .carousel-control-next,
+  .carousel-control-prev {
+      filter: invert(100%);
+  }

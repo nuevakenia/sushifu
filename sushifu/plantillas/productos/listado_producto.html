@@ -1,0 +1,64 @@
+{% extends "plantilla.html" %}
+{% load static %}
+<title>{% block title %}Listado Productos {% endblock %}</title>
+ 
+    
+ 
+{% block content %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="{% static 'js/confirmacion.js' %} "></script>
+   
+
+<div class="container">
+    <div class="row text-center h-100">
+        <p><h2>Listado Productos</h2>
+        </p> 
+<table class="table-responsive col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center my-auto align-items-center" style="width: 18rem;">
+    <thead>
+        <tr>
+            <th>Id_producto</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Descripcion</th>
+            <th>Stock</th>
+            <th>Precio</th>
+            <th>Catalogo</th>
+            <th>Imagen</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for p in productos %}
+        <tr>
+            <td>{{ p.id_producto }} </td>
+            <td>{{ p.nombre }} </td>
+            <td>{{ p.tipo }}</td>
+            <td>{{ p.descripcion }}</td>
+            <td>{{ p.stock }}</td>
+            <td>{{ p.precio }}</td>
+            <td>{{ p.catalogo }}</td>
+            {% if p.imagen %}
+            <td><img src="{{ p.imagen.url }}" alt="Producto 1" width="80" height="80"></td>
+            {% else %}
+            <td><img src="{% static 'img/lija1.jpg' %}" alt="Producto 1" width="80" height="80"></td>
+            {% endif %}
+            <td>
+            <a href="{% url 'modificar_producto' p.id_producto %}">Modificar</a>
+            <a href="#" onclick="confirmarEliminacion({{p.id_producto}})">Eliminar</a>
+            </td>
+        </tr>
+    </tbody>
+        {% endfor %}
+
+</table>      
+   
+      {% endblock %}
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   </body>
+</html>
+
