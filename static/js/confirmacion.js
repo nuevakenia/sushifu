@@ -15,6 +15,23 @@ function confirmarEliminacion(id_producto) {
       })
 }
 
+function confirmarEliminacionC(id) {
+  Swal.fire({
+      title: '¿Estás seguro/a?',
+      text: "No podrás revertir esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Borrar!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        //redirigir al usuario
+        window.location.href ="/eliminar_carro/"+id+"/";
+      }
+    })
+}
+
 function confirmarAgregar(id_producto) {
   Swal.fire({
       title: '¿Estás seguro/a?',

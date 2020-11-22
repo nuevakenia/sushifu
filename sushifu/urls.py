@@ -16,9 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from sushifu.views import (inicio, about, contacto, listado_producto, agregar_producto, 
-modificar_producto, eliminar_producto, catalogo, pagina_login, pagina_logout, 
-pagina_registro, agregar_al_carro)
+from sushifu.views import about, agregar_al_carro, agregar_producto, catalogo, contacto, eliminar_carro, eliminar_producto, enviar_pedido, anular_pedido, inicio, listado_carro, listado_producto, modificar_producto, pagina_login, pagina_logout, pagina_registro
 from sushifu import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -43,4 +41,8 @@ urlpatterns = [
     path('password_reset/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name="password_reset_confirm"),
     path('password_reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name="password_reset_complete"),
     path('agregar_carro/<id_producto>/', agregar_al_carro, name="agregar_al_carro"),
+    path('listado_carro/', listado_carro, name="listado_carro"),
+    path('eliminar_carro/<id>/', eliminar_carro, name="eliminar_carro"),
+    path('enviar_pedido/', enviar_pedido, name="enviar_pedido"),
+    path('anular_pedido/<id_orden>/', anular_pedido, name="anular_pedido"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

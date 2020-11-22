@@ -1,20 +1,24 @@
 from django.http import HttpResponse, request
 from django.template import Template, Context
 from django.template.loader import get_template
+from django.utils import timezone
+from django.db.models.functions import Concat
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm 
 from .forms import ExtendedUserCreationForm, UsuarioForm, ProductoForm
-from mtv.models import Producto, Usuario, Carro
+from mtv.models import Carro, Orden, Producto, Usuario
 from django.contrib import messages
 from django.db import connection
 from django.core.files.base import ContentFile
 import cx_Oracle
+import locale
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models.aggregates import Sum
 
 def about(request):
 
@@ -77,8 +81,10 @@ def eliminar_producto(request, id_producto):
     return redirect(to=listado_producto)
 
 def catalogo(request):
+    usuario = request.user
     productos = Producto.objects.all()
-    data = {'productos':productos}
+    contador = Carro.objects.filter(id_carro=usuario.id).count()
+    data = {'productos':productos, 'contador':contador}
     return render(request, "productos/catalogo.html", data)
 
 def inicio(request):
@@ -118,7 +124,6 @@ def pagina_registro(request):
                 messages.warning(request, 'Identificación Correcta!')
             if formularioRegistro.is_valid and usuario_form.is_valid():
                 user = formularioRegistro.save()
-                
 
                 usuario = usuario_form.save(commit=False)
                 usuario.user = user
@@ -140,26 +145,7 @@ def pagina_registro(request):
 
 # CARRO
 
-def activar_carro(request):
-    
-    if request.method == 'GET':
-        usuario = request.user
-        check_carro = Carro.objects.get(id_carro)    
-        if check_carro == None:
-            carro = Carro.objects.create(usuario.id,)
-                
-            #p_name = request.POST['p_name']
-            # print(request.POST) 
-            print(usuario.id)
-            print(producto.nombre)
-            print(carro.id)
-    
-    #print(producto)
-
-    return render(request, 'productos/agregar_producto.html')
-
-
-def desactivar_carro(request,id_carro):
+def limpiar_carro(request,id_carro):
     data = {
         'form':ProductoForm()
     }
@@ -171,8 +157,9 @@ def desactivar_carro(request,id_carro):
             data['mensaje'] = "Guardado correctamente"
         data['form'] = formulario
 
-    return render(request, 'productos/agregar_producto.html',data)
+    return render(request, 'limpiar_carro.html',data)
 
+@login_required(login_url="login")
 def agregar_al_carro(request,id_producto):
     
     if request.method == 'GET':
@@ -182,7 +169,7 @@ def agregar_al_carro(request,id_producto):
         print(producto.nombre)
         print(producto.id_producto)
         print(producto.descripcion)
-        cantidad = 2
+        cantidad = 1
         #if Carro.objects.filter(id_carro=usuario.id).exists():
             #print("ya existe")
            # print(Carro.objects.filter(id_carro=usuario.id))
@@ -198,30 +185,59 @@ def agregar_al_carro(request,id_producto):
     
     return render(request, 'agregar_carro.html')
 
-def modificar_carro(request,id_carro):
-    data = {
-        'form':ProductoForm()
-    }
+@login_required(login_url="login")
+def enviar_pedido(request):
+    if request.method == 'GET':
+        locale.setlocale(locale.LC_ALL, '')
+        usuario = request.user
+        usuario2 = Usuario.objects.get(id=usuario.id)
+        carros = Carro.objects.filter(id_carro=usuario.id)
+        carro = Carro.objects.filter(id_carro=usuario.id).first()
+        total = locale.format('%.0f',Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum'], grouping=True, monetary=True)
+        total2 = Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum']
+        orden = Orden.objects.create(id_carro=carro,fecha_hora=timezone.now(),nombre_cliente=usuario2.nombre+' '+usuario2.apellido,direccion=usuario2.direccion,nota='',total=total2)
+        data = {'orden':orden,'total':total}
+    return render(request, 'enviar_pedido.html', data)
 
-    if request.method == 'POST':
-        formulario = ProductoForm(request.POST, files=request.FILES)
-        if formulario.is_valid():
-            formulario.save()
-            data['mensaje'] = "Guardado correctamente"
-        data['form'] = formulario
+@login_required(login_url="login")
+def eliminar_carro(request,id):
+    carro = Carro.objects.get(id=id)
+    carro.delete()
+    return redirect(to=listado_carro)
 
-    return render(request, 'productos/agregar_producto.html',data)
+@login_required(login_url="login")
+def listado_carro(request):
+    usuario = request.user
+    usuario2 = Usuario.objects.get(id=usuario.id)
+    locale.setlocale(locale.LC_ALL, '')
+   # carro = Carro.objects.get(id_carro=usuario.id)
+    #id_producto = carro.id_producto
+  #  producto = Producto.objects.get(id_producto=id_producto)
+   # id_carro = usuario.id
+    carros = Carro.objects.filter(id_carro=usuario.id)
+    carro = Carro.objects.filter(id_carro=usuario.id).first()
+    orden2 = Orden.objects.all().last()   
+    #productos = Producto.objects.all(id_producto=carros.id_carro)
+    total = locale.format('%.0f',Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum'], grouping=True, monetary=True)
+    total2 = Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum']
+    data = {'carros':carros,'total':total,'carro':carro}
+    return render(request, "listado_carro.html", data)
 
-def eliminar_carro(request,id_carro):
-    data = {
-        'form':ProductoForm()
-    }
+ #sumar precio_producto
 
-    if request.method == 'POST':
-        formulario = ProductoForm(request.POST, files=request.FILES)
-        if formulario.is_valid():
-            formulario.save()
-            data['mensaje'] = "Guardado correctamente"
-        data['form'] = formulario
-
-    return render(request, 'productos/agregar_producto.html',data)
+def anular_pedido(request, id_orden):
+    if request.method == 'GET':
+        usuario = request.user
+        usuario2 = Usuario.objects.get(id=usuario.id)
+        carros = Carro.objects.filter(id_carro=usuario.id)
+        carro = Carro.objects.filter(id_carro=usuario.id).first()
+        ordenes = Orden.objects.get(id_orden=id_orden)
+        print(ordenes.id_orden)
+        if Orden.objects.get(id_orden=id_orden).exist():
+            orden2 = ordenes
+            ordenes.delete()
+            data = {'orden2':orden2}   
+        else:
+            print('No existe')
+            redirect(to=listado_carro)
+    return render(request, 'anular_pedido.html', data)

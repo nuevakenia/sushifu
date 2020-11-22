@@ -41,8 +41,8 @@ class Carro(models.Model):
 
 
 class Orden(models.Model):
-    id_orden = models.IntegerField(primary_key=True)
-    id_carro = models.OneToOneField('Carro', on_delete=models.CASCADE)
+    id_orden = models.AutoField(primary_key=True)
+    id_carro = models.ForeignKey('Carro', on_delete=models.CASCADE)
     fecha_hora = models.DateTimeField(default=timezone.now)
     nombre_cliente = models.CharField(max_length=50)
     direccion = models.CharField(max_length=99)
