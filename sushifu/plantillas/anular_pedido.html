@@ -31,7 +31,11 @@
     <h1>Total: ${{total}}</h1>
         </div>
         <div class="col-xl-12">
+        {% if orden2.id_orden != None %}
         <a href="{% url 'anular_pedido' orden2.id_orden %}" class="btn btn-success" role="button" aria-pressed="true">Anular Pedido</a>
+        {% else %}
+        <a href="{% url 'inicio' %}" class="btn btn-success" role="button" aria-pressed="true">Inicio</a>
+        {% endif %}
         </div>   
   </div>
  </div>

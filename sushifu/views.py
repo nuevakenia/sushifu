@@ -29,8 +29,16 @@ def contacto(request):
     return render(request, "contacto.html")
 
 def navbar(request):
-
-    return render(request, "navbar.html")    
+    usuario = request.user
+    carrote = Carro.objects.filter(id_carro=usuario.id)
+    print(carrote)
+    print(usuario.id)
+    if carrote:
+        contador = Carro.objects.filter(id_carro=usuario.id).count()
+        data = {'contador':contador,'carrote':carrote} 
+    else:
+        data = {'carrote':carrote}   
+    return render(request, "navbar.html", data)    
 
 @login_required(login_url="login")
 @staff_member_required
@@ -112,7 +120,7 @@ def pagina_login(request):
         else:
             messages.warning(request, 'Identificación Incorrecta!')
 
-    return render(request, 'login.html',{'titulo':'Indentifícate'})
+    return render(request, 'login.html',{'titulo':'Identifícate'})
 
 def pagina_registro(request):
         if request.method == 'POST':
@@ -170,20 +178,9 @@ def agregar_al_carro(request,id_producto):
         print(producto.id_producto)
         print(producto.descripcion)
         cantidad = 1
-        #if Carro.objects.filter(id_carro=usuario.id).exists():
-            #print("ya existe")
-           # print(Carro.objects.filter(id_carro=usuario.id))
-        #else:
         carro = Carro.objects.create(id_carro=usuario.id,id_producto=producto,nombre_producto=producto.nombre,precio_producto=producto.precio, cantidad_producto=cantidad)
         print(carro)
-       # carro = Carro.objects.set(usuario.id,producto.id_producto,producto.nombre,producto.precio,cantidad)
-        #p_name = request.POST['p_name']
-        # print(request.POST) 
-        
-       # print(carro.nombre_producto)
-    
-    
-    return render(request, 'agregar_carro.html')
+    return redirect(to=catalogo)
 
 @login_required(login_url="login")
 def enviar_pedido(request):
@@ -208,36 +205,44 @@ def eliminar_carro(request,id):
 @login_required(login_url="login")
 def listado_carro(request):
     usuario = request.user
-    usuario2 = Usuario.objects.get(id=usuario.id)
-    locale.setlocale(locale.LC_ALL, '')
-   # carro = Carro.objects.get(id_carro=usuario.id)
-    #id_producto = carro.id_producto
-  #  producto = Producto.objects.get(id_producto=id_producto)
-   # id_carro = usuario.id
-    carros = Carro.objects.filter(id_carro=usuario.id)
-    carro = Carro.objects.filter(id_carro=usuario.id).first()
-    orden2 = Orden.objects.all().last()   
-    #productos = Producto.objects.all(id_producto=carros.id_carro)
-    total = locale.format('%.0f',Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum'], grouping=True, monetary=True)
-    total2 = Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum']
-    data = {'carros':carros,'total':total,'carro':carro}
+    carrote = Carro.objects.filter(id_carro=usuario.id)
+    print(carrote)
+    if carrote:
+        usuario2 = Usuario.objects.get(id=usuario.id)
+        locale.setlocale(locale.LC_ALL, '')
+    # carro = Carro.objects.get(id_carro=usuario.id)
+        #id_producto = carro.id_producto
+    #  producto = Producto.objects.get(id_producto=id_producto)
+    # id_carro = usuario.id
+        carros = Carro.objects.filter(id_carro=usuario.id)
+        carro = Carro.objects.filter(id_carro=usuario.id).first()
+        orden2 = Orden.objects.all().last()   
+        #productos = Producto.objects.all(id_producto=carros.id_carro)
+        total = locale.format('%.0f',Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum'], grouping=True, monetary=True)
+        total2 = Carro.objects.filter(id_carro=usuario.id).aggregate(sum=Sum('precio_producto'))['sum']
+        error = 0        
+        data = {'carros':carros,'total':total,'carro':carro,'error':error}
+    else:
+        print('se mamut')
+        error=1
+        data = {'error':error}
     return render(request, "listado_carro.html", data)
 
  #sumar precio_producto
 
 def anular_pedido(request, id_orden):
-    if request.method == 'GET':
+    if request.method == 'GET' and Orden.objects.filter(id_orden__isnull=False).distinct():
         usuario = request.user
         usuario2 = Usuario.objects.get(id=usuario.id)
         carros = Carro.objects.filter(id_carro=usuario.id)
         carro = Carro.objects.filter(id_carro=usuario.id).first()
         ordenes = Orden.objects.get(id_orden=id_orden)
         print(ordenes.id_orden)
-        if Orden.objects.get(id_orden=id_orden).exist():
-            orden2 = ordenes
-            ordenes.delete()
-            data = {'orden2':orden2}   
-        else:
-            print('No existe')
-            redirect(to=listado_carro)
-    return render(request, 'anular_pedido.html', data)
+        orden2 = ordenes
+        ordenes.delete()
+        redireccionar= redirect('/listado_carro/')
+        data = {'orden2':orden2}   
+    else:
+        print('No existe')
+        redirect(to=listado_carro)
+    return render(request, 'anular_pedido.html')

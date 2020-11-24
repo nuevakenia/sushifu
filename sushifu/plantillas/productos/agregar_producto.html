@@ -4,7 +4,8 @@
                 {% block content %}
                 <div class="container">
                     <div class="row"> 
-                        <div class="col">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center mx-auto align-items-center" style="width: 18rem;" >
+
                 <p><h1>CRUD Productos</h1></p>
                 <br>
                 <p><h2>Agregar Producto</h2>
@@ -13,7 +14,7 @@
                 <form action="" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <table> 
+                    <table class="table table-bordered table-striped text-center"> 
                         {{ form.as_table }} 
                     </table> 
                     <br>

@@ -11,9 +11,10 @@
 
 <div class="container">
     <div class="row text-center h-100">
-        <p><h2>Listado Productos</h2>
-        </p> 
-<table class="table-responsive col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center my-auto align-items-center" style="width: 18rem;">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center mx-auto align-items-center" style="width: 18rem;" >
+            <table class="table table-bordered table-striped text-center">
+    <p><h2>Listado Productos</h2>
+    </p> 
     <thead>
         <tr>
             <th>Id_producto</th>
@@ -40,7 +41,7 @@
             {% if p.imagen %}
             <td><img src="{{ p.imagen.url }}" alt="Producto 1" width="80" height="80"></td>
             {% else %}
-            <td><img src="{% static 'img/lija1.jpg' %}" alt="Producto 1" width="80" height="80"></td>
+            <td><img src="{% static 'img/minilogo.png' %}" alt="Producto 1" width="80" height="80"></td>
             {% endif %}
             <td>
             <a href="{% url 'modificar_producto' p.id_producto %}">Modificar</a>

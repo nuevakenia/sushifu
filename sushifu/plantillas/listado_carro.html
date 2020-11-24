@@ -11,19 +11,22 @@
 
 <div class="container">
     <div class="row text-center h-100">
-        <p><h2>Listado Productos</h2>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center mx-auto align-items-center" style="width: 18rem;" >
+        {% if error == 0 %}
+        <p><h2>Listado Productos en Carro</h2>
         </p> 
-<table class="table-responsive col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center my-auto align-items-center" style="width: 18rem;">
-    <thead>
-        <tr>
+        <div class="col-xl-12 text-center mx-auto align-items-center">
+            <table class="table table-bordered table-striped text-center">
+        <thead>
+            <tr>
             <th>Nombre</th>
             <th>Precio</th>
             <th>Cantidad</th>
             <th>Imagen</th>
             <th>Accion</th>
-        </tr>
-    </thead>
-    <tbody>
+            </tr>
+        </thead>
+        <tbody>
     {% for p in carros %}
         <tr>
             <td>{{ p.nombre_producto }}</td>
@@ -32,19 +35,28 @@
             {% if p.imagen %}
             <td><img src="{{ p.imagen.url }}" alt="Producto 1" width="80" height="80"></td>
             {% else %}
-            <td><img src="{% static 'img/lija1.jpg' %}" alt="Producto 1" width="80" height="80"></td>
+            <td><img src="{% static 'img/minilogo.png' %}" alt="Producto 1" width="80" height="80"></td>
             {% endif %}
             <td>
             <a href="#" onclick="confirmarEliminacionC({{p.id}})">Eliminar</a>
             </td>
         </tr>
     </tbody>
-        {% endfor %}
+            {% endfor %}
         
-</table>      
+</table>
+</div>      
     <h1>Total: ${{total}}</h1>
     <a href="{% url 'enviar_pedido' %}" class="btn btn-success" role="button" aria-pressed="true">Enviar Pedido</a>
-      {% endblock %}
+    {% else %}
+    <div class="col-xl-12">
+        <h2>Aún no has agregado ningún producto al Carro</h2>
+    </div>
+</div>
+</div>
+</div>
+    {% endif %}
+    {% endblock %}
       <!-- Optional JavaScript -->
       <!-- jQuery first, then Popper.js, then Bootstrap JS -->
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import date
 from django.contrib.auth.models import User
 import os
 
@@ -11,7 +12,7 @@ class Usuario(models.Model):
     comuna = models.CharField(max_length=99)
     provincia = models.CharField(max_length=99)
     region = models.CharField(max_length=99)
-    fecha_nacimiento = models.DateTimeField(default=timezone.now, null=True)
+    fecha_nacimiento = models.CharField(max_length=99)
     sexo = models.CharField(max_length=50)
     telefono = models.CharField(max_length=99)
     def __str__(self):
@@ -48,6 +49,7 @@ class Orden(models.Model):
     direccion = models.CharField(max_length=99)
     nota = models.CharField(max_length=200)
     total= models.IntegerField(default='0')
+    pagado= models.BooleanField(default='0')
   #  def __str__(self):
   #      return self.id_orden
 
