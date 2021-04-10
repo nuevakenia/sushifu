@@ -28,18 +28,15 @@ def contacto(request):
 
     return render(request, "contacto.html")
 
-def navbar(request):
-    usuario = request.user
-    carrote = Carro.objects.filter(id_carro=usuario.id)
-    print(carrote)
-    print(usuario.id)
-    if carrote:
-        contador = Carro.objects.filter(id_carro=usuario.id).count()
-        data = {'contador':contador,'carrote':carrote} 
-    else:
-        data = {'carrote':carrote}   
-    return render(request, "navbar.html", data)    
+def plantilla(request):
 
+    return render(request, "plantilla.html")  
+
+def navbar(request):
+
+    return render(request, "navbar.html")    
+
+  
 @login_required(login_url="login")
 @staff_member_required
 def listado_producto(request):
@@ -92,7 +89,9 @@ def catalogo(request):
     usuario = request.user
     productos = Producto.objects.all()
     contador = Carro.objects.filter(id_carro=usuario.id).count()
-    data = {'productos':productos, 'contador':contador}
+    request.session['contador1'] = contador
+    contador1 = request.session.get('contador1', 0)
+    data = {'productos':productos, 'contador1':contador1}
     return render(request, "productos/catalogo.html", data)
 
 def inicio(request):
@@ -179,6 +178,8 @@ def agregar_al_carro(request,id_producto):
         print(producto.descripcion)
         cantidad = 1
         carro = Carro.objects.create(id_carro=usuario.id,id_producto=producto,nombre_producto=producto.nombre,precio_producto=producto.precio, cantidad_producto=cantidad)
+        contador = request.session.get('contador', 0)
+        request.session['contador'] = contador + 1
         print(carro)
     return redirect(to=catalogo)
 

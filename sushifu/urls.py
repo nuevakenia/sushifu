@@ -19,7 +19,7 @@ from django.contrib.auth import views as auth_views
 from sushifu.views import (navbar,about, agregar_al_carro, agregar_producto, catalogo, 
 contacto, eliminar_carro, eliminar_producto, enviar_pedido, 
 anular_pedido, inicio, listado_carro, listado_producto, 
-modificar_producto, pagina_login, pagina_logout, pagina_registro)
+modificar_producto, pagina_login, pagina_logout, pagina_registro, plantilla)
 from sushifu import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -49,4 +49,5 @@ urlpatterns = [
     path('enviar_pedido/', enviar_pedido, name="enviar_pedido"),
     path('anular_pedido/<id_orden>/', anular_pedido, name="anular_pedido"),
     path('navbar/', navbar, name="navbar"),
+    path('plantilla/', plantilla, name="plantilla"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
